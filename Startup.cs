@@ -159,9 +159,6 @@ namespace DataProxy
             };
 
             app.RunProxy(options);
-
-
-
         }
     }
 }

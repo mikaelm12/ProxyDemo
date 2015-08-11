@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataProxy.Models;
 using Microsoft.AspNet.Mvc;
 
 namespace DataProxy.Controllers
 {
     public class HomeController : Controller
     {
+        [FromServices]
+        public ApplicationDbContext DbContext { get; set; }
         public IActionResult Index()
         {
-            return View();
+            //More information!
+            var requests = new  SiteData(DbContext.Requests.OrderBy(p => p.TimeStamp).ToArray());
+            return View(requests);
         }
 
         public IActionResult About()

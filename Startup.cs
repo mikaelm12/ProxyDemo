@@ -93,6 +93,7 @@ namespace DataProxy
         // Configure is called after ConfigureServices is called.
         [FromServices]
         public ApplicationDbContext DbContext { get; set; }
+        private string host = "microsoft.com";
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -133,14 +134,17 @@ namespace DataProxy
                 {
                     var DbContext = (ApplicationDbContext)context.RequestServices.GetService(typeof(ApplicationDbContext));
                     var request = new Request();
-                    var url = $"{context.Request.Scheme}://{context.Request.Host}:{ context.Connection.RemotePort} { context.Request.PathBase}{ context.Request.Path}{ context.Request.QueryString}";
-                    request.MethodType = context.Request.Method.ToString();
-                    request.Url = url;
-                    request.TimeStamp = DateTime.Now;
-                    DbContext.Add(request);
-                    DbContext.SaveChanges();
-                    await next(context);
+                    if (!context.Request.Path.ToString().Contains("secret-route"))
+                    {
+                        var url = $"{context.Request.Scheme}://{host}:{ context.Connection.RemotePort} { context.Request.PathBase}{ context.Request.Path}{ context.Request.QueryString}";
+                        request.MethodType = context.Request.Method.ToString();
+                        request.Url = url;
+                        request.TimeStamp = DateTime.Now;
+                        DbContext.Add(request);
+                        DbContext.SaveChanges();
+                    }
 
+                    await next(context);
                 };
             });
 
@@ -154,7 +158,7 @@ namespace DataProxy
             var options = new ProxyOptions()
             {
                 Scheme = "https",
-                Host = "microsoft.com",
+                Host = host,
                 Port = "443"
             };
 

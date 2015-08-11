@@ -1,2 +1,77 @@
-﻿@model DataProxy.Models.Request
-<body>Hello World! This should have some information about the requests to the backend site</body>
+﻿@model DataProxy.Models.SiteData
+<head>
+    <link href="~/css/c3.min.css" rel="stylesheet" type="text/css"/>
+    <script src="~/js/c3.min.js"></script>
+    <script src="~/js/d3.min.js"></script>
+</head>
+
+<body>
+    <br>
+    <div id="chart"></div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="chart3"></div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div id="chart2"></div>
+    @Model.request.Count()        Hello World! This should have some information about the requests to the backend site
+   @foreach (var req in Model.request)
+   {
+       <h3>@req.Url </h3>
+
+   }
+
+    <script>
+        var chart = c3.generate({
+            bindto: '#chart',
+            data: {
+                columns: [
+                  ['data1', 30, 200, 100, 400, 150, 250],
+                  ['data2', 50, 20, 10, 40, 15, 25]
+                ],
+                labels: true
+            }
+        });
+
+        var chart = c3.generate({
+            bindto: '#chart2',
+            data: {
+                columns: [
+                    ['Get Requests', @Model.GetRequests],
+                    ['Post Requests', @Model.PostRequests],
+                    ['DELETE Requests', @Model.PutRequests],
+                    ['PUT Requests', @Model.DeleteRequest]
+                ],
+                type: 'bar',
+                labels: true
+            },
+            bar: {
+                width: {
+                    ratio: 0.3
+                }
+            }
+        });
+
+        var chart = c3.generate({
+            bindto: '#chart3',
+            data: {
+                // iris data from R
+                columns: [
+                    ['GET Requests', @Model.GetRequests],
+                    ['POST Requests', @Model.PostRequests],
+                    ['DELETE Requests', @Model.PutRequests],
+                    ['PUT Requests', @Model.DeleteRequest]
+                ],
+                type: 'donut',
+                labels: true,
+                onclick: function (d, i) { console.log("onclick", d, i); },
+                onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+                onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+            }
+        });
+    </script>
+    </body>

@@ -18,7 +18,7 @@
     <br>
     <br>
     <div id="chart2"></div>
-    @Model.request.Count()        Hello World! This should have some information about the requests to the backend site
+    @Model.request.Count() 
    @foreach (var req in Model.request)
    {
        <h3>@req.Url </h3>
@@ -43,8 +43,8 @@
                 columns: [
                     ['Get Requests', @Model.GetRequests],
                     ['Post Requests', @Model.PostRequests],
-                    ['DELETE Requests', @Model.PutRequests],
-                    ['PUT Requests', @Model.DeleteRequest]
+                    ['DELETE Requests', @Model.DeleteRequest],
+                    ['PUT Requests', @Model.PutRequests]
                 ],
                 type: 'bar',
                 labels: true
@@ -61,10 +61,10 @@
             data: {
                 // iris data from R
                 columns: [
-                    ['GET Requests', @Model.GetRequests],
-                    ['POST Requests', @Model.PostRequests],
-                    ['DELETE Requests', @Model.PutRequests],
-                    ['PUT Requests', @Model.DeleteRequest]
+                    ['Get Requests', @Model.GetRequests],
+                    ['Post Requests', @Model.PostRequests],
+                    ['DELETE Requests', @Model.DeleteRequest],
+                    ['PUT Requests', @Model.PutRequests]
                 ],
                 type: 'donut',
                 labels: true,

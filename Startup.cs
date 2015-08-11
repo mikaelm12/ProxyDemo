@@ -93,8 +93,6 @@ namespace DataProxy
         // Configure is called after ConfigureServices is called.
         [FromServices]
         public ApplicationDbContext DbContext { get; set; }
-        private bool DisableProxy = true;
-        private string url;
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -129,54 +127,28 @@ namespace DataProxy
             // app.UseMicrosoftAccountAuthentication();
             // app.UseTwitterAuthentication();
 
-            // Add MVC to the request pipeline.
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=Home}/{action=Index}/{id?}");
-
-            //    // Uncomment the following line to add a route for porting Web API 2 controllers.
-            //    // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
-            //});
-
-
             app.Use(next =>
             {
-                // build
                 return async context =>
                 {
                     var DbContext = (ApplicationDbContext)context.RequestServices.GetService(typeof(ApplicationDbContext));
                     var request = new Request();
-                    //  var uriString = $"{_options.Scheme}://{_options.Host}:{_options.Port}{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
-
-                    url = $"{context.Request.Scheme}://{context.Request.Host}:{ context.Connection.RemotePort} { context.Request.PathBase}{ context.Request.Path}{ context.Request.QueryString}";
-                    DisableProxy = url.Contains("no-proxy");
+                    var url = $"{context.Request.Scheme}://{context.Request.Host}:{ context.Connection.RemotePort} { context.Request.PathBase}{ context.Request.Path}{ context.Request.QueryString}";
                     request.MethodType = context.Request.Method.ToString();
                     request.Url = url;
                     request.TimeStamp = DateTime.Now;
                     DbContext.Add(request);
                     DbContext.SaveChanges();
-
-
-                    // Decide wheather to use proxy or not
-
-                    // context.Request.
-
                     await next(context);
 
                 };
             });
 
-            //Add MVC to the request pipeline.
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "no-proxy/{controller=Home}/{action=Index}/{id?}");
-
-                    // Uncomment the following line to add a route for porting Web API 2 controllers.
-                    // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
+                    template: "secret-route/{controller=Home}/{action=Index}/{id?}");
                 });
 
             var options = new ProxyOptions()
